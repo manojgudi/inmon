@@ -1,8 +1,19 @@
 #!/usr/bin/env python
 
-import UI_GTK
+# path variable is where the module_file resides
+
+def check_module_file_exists(path):
+	try:
+		open(path+'/input_touch','r')
+		return True
+	except:
+		return False
+			
 
 if __name__=="__main__" :
-	front_obj=UI_GTK.front_end()
-	front_obj.main()
-    	UI_GTK.gtk.main()
+	
+	if not check_module_file_exists(path='.'):
+		import UI_GTK
+		front_obj=UI_GTK.front_end()
+		front_obj.main()
+    		UI_GTK.gtk.main()

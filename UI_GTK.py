@@ -3,6 +3,8 @@
 import sys
 import subprocess as sp
 
+import os
+path = os.getenv('HOME')
 
 try:
 	import pygtk
@@ -23,6 +25,13 @@ class front_end:
 	""" This is front handler for appsearch feature"""
 	def __init__(self):
 		
+		#Modules
+		self.modules_list = ['module1','module2','module3']		
+		# Determine which should be current module
+		self.current_module = self.current_module(self.modules_list)	
+		# Load the module
+		sp.Popen(["modprobe",current_module])		
+	
 		#Set glade file
 		self.gladefile = "./UI.glade"
 		self.glade = gtk.Builder()
@@ -42,7 +51,6 @@ class front_end:
 		## dic start
 		self.dic = {
 		"on_okay_press" : self.on_okay_press
-
 		}
 		## End of dic
 		self.glade.connect_signals(self.dic)
@@ -65,7 +73,7 @@ class front_end:
 
 	def on_okay_press(self, widget):
 		self.inmon_button = self.glade.get_object("inmon_button")
-		self.touch_success()
+		self.touch_success(path, self.current_module)
 
 		print 'pressed okay'
 
@@ -89,15 +97,34 @@ class front_end:
 			if seconds == 0:
 				self.timer_id = None
 				print "Preparing to copy different touch config files"
-				self.touch_failed()
+				self.touch_failed(path, self.current_module)
 
 			return True
 		
 		return False
 	### END TIMER CODE ###
 
-	def touch_failed(self):
-		pass
+	def touch_failed(self,path,module):
+		# Register the current_module is bad module
+		self.file_obj = open(path+'/bad_modules','a')
+		self.file_obj.write(module+' ')
+		
+		# Change script.bin
+		# Note: all script.bin files should be saved as script.bin_modulename
+		sp.Popen(['cp',script_bin_path+'/script.bin_'+module, script_bin_syspath+'/script.bin'])
 
-	def touch_success(self):
-		pass
+	def touch_success(self.path,module):
+		self.file_obj = open(path+'/input_touch','w')
+		self.file_obj.write(module)
+
+	def current_module(self, modules_list):
+		# If bad_modules file is not found
+		try:
+			self.file_obj = open(path+'/bad_modules','r')
+			self.bad_modules = self.file_obj.read()
+		
+			for module in modules_list:
+				if self.bad_modules.find(module) == -1:
+					return module
+		except:
+			return modules_list[0]
