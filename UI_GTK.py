@@ -4,8 +4,13 @@ import sys
 import subprocess as sp
 
 import os
-path = os.getenv('HOME')
 
+# Global_paths
+path = os.getenv('HOME')
+path = '/home/manoj/'
+
+script_bin_path = path+'/script_bin'
+script_bin_syspath = path 
 try:
 	import pygtk
 	import gobject
@@ -24,13 +29,12 @@ except:
 class front_end:
 	""" This is front handler for appsearch feature"""
 	def __init__(self):
-		
 		#Modules
-		self.modules_list = ['module1','module2','module3']		
+		self.modules_list = ['ft5x_ts','ektf2k','gt811_ts']		
 		# Determine which should be current module
-		self.current_module = self.current_module(self.modules_list)	
+		self.load_module = self.current_module(self.modules_list)	
 		# Load the module
-		sp.Popen(["modprobe",current_module])		
+		sp.Popen(["modprobe",self.load_module])		
 	
 		#Set glade file
 		self.gladefile = "./UI.glade"
@@ -112,6 +116,7 @@ class front_end:
 		# Change script.bin
 		# Note: all script.bin files should be saved as script.bin_modulename
 		sp.Popen(['cp',script_bin_path+'/script.bin_'+module, script_bin_syspath+'/script.bin'])
+		sp.Popen('reboot')
 
 	def touch_success(self.path,module):
 		self.file_obj = open(path+'/input_touch','w')
